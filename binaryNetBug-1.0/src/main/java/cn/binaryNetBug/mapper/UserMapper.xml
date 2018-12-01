@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.binaryNetBug.mapper.UserMapper">
+  <select id="selectUser" resultType="user">
+  	select * from user;
+  </select>
+  <insert id="insertUser" parameterType="user">
+  	insert into user(nickName,headImg,password) values(#{nickName},#{headImg},#{password});
+  </insert>
+  <delete id="deleteUser">
+  	delete from user where userId=#{userId};
+  </delete>
+  <update id="updateUser" parameterType="user">
+  	update user set nickName=#{nickName},password=#{password},headImg=#{headImg} where userId=#{userId}
+  </update>
+  <select id="selectOne" resultType="user">
+  	select * from user where userId=#{userId}
+  </select>
+  <select id="selectNickName" resultType="user">
+  	select * from user where nickName=#{nickName}
+  </select>
+  <select id="login" resultType="user">
+  	select * from user where nickName=#{nickName} and password=#{password}
+  </select>
+</mapper>

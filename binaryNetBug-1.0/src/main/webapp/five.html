@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>五子棋</title>
+	<style type="text/css">
+		*{
+			text-align: center;
+			padding: 0;
+		}
+		h1{
+			text-align: center;
+			color: #D51918;
+		}
+		table{
+			margin: 0 auto;
+		}
+		td{
+			background-color: #EE9A07;
+			width: 30px;
+			height: 30px;
+			font-size: 25px;
+		}
+		p{
+			text-align: center;
+			color: #D51918;
+		}
+		#victor{
+			width: 500px;
+			height: 400px;
+			border: 4px solid #996699;
+			border-radius: 20px;
+			padding-top: 100px;
+			font-size: 25px;
+			margin: 0 auto;
+			position: absolute;
+			top: 100px;
+			left: 60px;
+			background-color:#D2A870;
+			color: red;
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<h1>自制五子棋</h1>
+	<p><span id="colo">黑</span>棋落子</p>
+	<table>
+		<tbody id="tbl">
+		</tbody>
+	</table>
+	<div id="victor">
+		<h1><span id="win"></span>棋胜出</h1>
+		<input type="button" value="重新开始" style="font-size: 20px;" onclick="restare()">
+	</div>
+	<script type="text/javascript">
+		var num = 1;
+		var tda = document.getElementsByTagName("td");
+		var colo = document.getElementById("colo");
+		var win = document.getElementById("win");
+		var tbl = document.getElementById("tbl");
+		var tb="";
+		//实现对页面的操作
+		//初始化棋盘
+		for (var i = 0; i < 15; i++) {
+			tb += "<td></td>";
+		}
+		tbl.innerHTML = "<tr>"+tb+"</tr>"
+		for (var i = 0; i < 14; i++) {
+			tbl.innerHTML += "<tr>"+tb+"</tr>";
+		}
+		for(var i = 0;i < tda.length;i++){
+			tda[i].n = 0;
+			tda[i].index = i;
+		}
+		//游戏开始
+		begin();
+		function begin() {
+			for (var i = 0;i < tda.length;i++) {
+				tda[i].onclick = function () {
+					if (tda[this.index].n == 0) {
+						num++;
+						tda[this.index].innerHTML = "●";
+						if(num % 2 == 0){
+							tda[this.index].style.color = "black";
+							tda[this.index].n = 1;
+							colo.innerHTML = "白";
+						}else{
+							tda[this.index].style.color = "white";
+							tda[this.index].n = 2;
+							colo.innerHTML = "黑";
+						}
+					}else{
+						alert("此处已经有棋子了");
+					}
+					//游戏逻辑
+					//横向逻辑
+					for (var i = 0;i < tda.length;i++) {
+						if (i < tda.length - 1 && tda[i].n == tda[i+1].n) {
+							var j=2;
+							for(j = 2;j < 5;j++){
+								if (i < (tda.length - 4) && (tda[i].n == tda[i+j].n && parseInt(i/15) ==parseInt((i+j)/15)) && tda[i].n != 0) {
+									continue;
+								}else{
+									break;
+								}
+							}
+							if (j == 5) {
+								victor(tda[i].n);
+							}
+						}
+					}
+					//左斜向逻辑
+					for (var i = 0;i < tda.length;i++) {
+						if (i < tda.length - 14 && tda[i].n == tda[i+14].n && parseInt(i/15) !=parseInt((i+j)/15)) {
+							var j=2;
+							for(j = 28;j < 70;j+=14){
+								if(i < tda.length - 56 && tda[i].n == tda[i+j].n && parseInt(i/15) !=parseInt((i+j)/15) && tda[i].n != 0){
+									continue;
+								}else{
+									break;
+								}
+							}
+							if (j == 70) {
+								victor(tda[i].n);
+							}
+						}
+					}
+					//竖向逻辑
+					for (var i = 0;i < tda.length;i++) {
+						if (i < tda.length - 15 && tda[i].n == tda[i+15].n) {
+							var j=2;
+							for(j = 30;j < 75;j+=15){
+								if (i < tda.length - 60 && tda[i].n == tda[i+j].n && tda[i].n != 0) {
+									continue;
+								}else{
+									break;
+								}
+							}
+							if (j == 75) {
+								victor(tda[i].n);
+							}
+						}
+					}
+					//右斜向逻辑
+					for (var i = 0;i < tda.length;i++) {
+						if (i < tda.length - 16 && tda[i].n == tda[i+16].n && parseInt(i/15)+2 !=parseInt((i+16)/15)) {
+							var j=2;
+							for(j = 32;j < 80;j+=16){
+								if (i <= tda.length - 64 && tda[i].n == tda[i+j].n && parseInt(i/15) !=parseInt((i+j)/15) && tda[i].n != 0) {
+									console.log(j);
+									continue;
+								}else{
+									break;
+								}
+							}
+							if (j == 80) {
+								victor(tda[i].n);
+							}
+						}
+					}
+				}
+			}
+		}
+		//游戏结束
+		function victor(n) {
+			if (n == 1) {
+				win.innerHTML = "黑";
+			}else if (n == 2) {
+				win.innerHTML = "白";
+			}
+			document.getElementById("victor").style.display = "block";
+		}
+		//游戏重新开始
+		function restare() {
+			for (var i = 0; i < tda.length; i++) {
+				tda[i].innerText="";
+			}
+			document.getElementById("victor").style.display = "none";
+			for (var i = 0; i < tda.length; i++) {
+				tda[i].n = 0;
+				num = 1;
+			}
+		}
+	</script>
+</body>
+</html>
