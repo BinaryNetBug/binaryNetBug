@@ -91,7 +91,7 @@ function openDesign(scrollTop,id){
 		'<p><img id="headImg" alt="图片未加载" src="images/default.png" style="width:100px;"><input type="file" style="display:none" id="file"><input type="hidden" value="images/default.png" name="headImg" id="headName"></p>'+
 		'用户名：<input type="text" id="nickName" maxlength="15"><br>'+
 		'密码：<input type="password" id="insertPassword" maxlength="20"><br><br>'+
-		'<input type="submit" value="注册" class="loginButton" style="color:#FFFF00;background-image:url(images/designButton.png);">'+
+		'<input type="submit" value="注册" class="loginButton" style="color:#FFFF00;background-image:url(../images/designButton.png);">'+
 		'<input type="reset" id="reset" style="display:none">'+
 	'</form>';
 	$('#'+id).html(domText);
