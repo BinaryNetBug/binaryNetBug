@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>打字小游戏</title>
+	<style type="text/css">
+		*{
+			font-family: "微软雅黑";
+			text-align: center;
+		}
+		body{
+			
+		}
+		#title{
+			font-size: 40px;
+			color: red;
+		}
+		#main{
+			position: relative;
+			width: 500px;
+			height: 550px;
+			margin: 0 auto;
+			overflow: hidden;
+			background-image: url('images/bg.jpg');
+			background-size: 100%;
+		}
+		#main p{
+			font-size: 30px;
+			text-shadow: 0 0 5px red;
+		}
+		#main p span{
+			color: #c6f3fd;
+		}
+		.letter{
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			border-radius: 15px;
+			font-size: 20px;
+			line-height: 30px;
+			color:red;
+			top: -30px;
+			background-size: 100%
+		}
+		.hearts{
+			width: 30px;
+			height: 22px;
+			float: left;
+			top:-100px;
+			position: relative;
+			background-image: url('images/heart.png');
+			background-size: 100%;
+		}
+		#gameover{
+			height: 300px;
+			width: 500px;
+			display: none;
+		}
+		#gameover p{
+			margin-top: 100px;
+			font-size: 40px;
+			color: red;
+		}
+		#gameover a{
+			text-decoration: none;
+			font-size: 20px;
+			color: #f7f03e;
+		}
+		#music_logo{
+			height: 30px;
+			width: 30px;
+			background-image: url("images/music.png");
+			background-size: 100%;
+			display: inline-block;
+			position: absolute;
+			top: 500px;
+			left: 450px;
+		}
+		#pause{
+			height: 25px;
+			width: 20px;
+			background-image: url('images/pause.png');
+			background-size: 100%;
+			display: inline-block;
+			position: absolute;
+			left: 465px;
+			top: 10px;
+		}
+		#strat{
+			font-size: 30px;
+			text-decoration: none;
+			display: inline-block;
+			width: 150px;
+			position: absolute;
+			top: 200px;
+			left: 170px;
+			color: red;
+		}
+	</style>
+</head>
+<body>
+	<p id="title">超级打字</p>
+	<div id="main">
+		<a href="javascript:pause()" id="strat">开始游戏</a>
+		<p>分数：<span id="score">0</span></p>
+		<div id="gameover">
+			<p>本次得分<span class="score">0</span></p>
+			<a href="test.html">New Game</a>
+		</div>
+		<a href="javascript:control_music()" id="music_logo"></a>
+		<a href="javascript:pause()" id="pause"></a>
+	</div>
+	<audio loop="loop" id="music">
+  		<source src="" type="audio/mpeg"/>
+	</audio>
+</body>
+<script type="text/javascript">
+
+	function $(id) {
+		return document.getElementById(id);
+	}
+	var str = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+	var main = $('main');
+	var nowScore = $("score");
+	var score = document.getElementsByClassName("score")[0];
+	var score_num = 0;
+	var now_score = 0;
+	var speed = 1000;
+	var speed1 = 40;
+	var life = 5;
+	var a = 0;
+	$("music").src = "bg.mp3";
+	function control_music() {
+		if (a==0) {
+			$("music_logo").style.backgroundImage = 'url(images/nomusic.png)';
+			$("music").remove();
+			a=1
+		}else{
+			$("music_logo").style.backgroundImage = 'url(images/music.png)'
+			var musicm = document.createElement("audio");
+			var musicn = document.createElement("source");
+			musicm.id="music";
+			musicm.loop="-1";
+			musicm.autoplay="autoplay";
+			musicn.id="musicsrc";
+			document.body.appendChild(musicm);
+			$("music").appendChild(musicn);
+			$('musicsrc').src = 'bg.mp3'
+			a=0;
+		}
+	}
+	for(var i = 0;i < 5;i++){
+		var heart = document.createElement('div');
+		heart.className = "hearts";
+		main.appendChild(heart)
+	}
+	var hearts = document.getElementsByClassName('hearts');
+	//生成字母
+	function appear() {
+		var left1 = parseInt(Math.random()*92+1);
+		var lette = parseInt(Math.random()*26);
+		var num = parseInt(Math.random()*2+1);
+		var div1=document.createElement("div");
+		div1.className="letter";
+		div1.style.left = left1+"%";
+		div1.style.backgroundImage = "url(images/letterbg"+num+".png)";
+		div1.innerText = str[lette];
+		main.appendChild(div1);
+	}
+	var time = setInterval(appear, speed);
+
+	//字母落下
+	function moveDown() {
+		var letter = document.getElementsByClassName('letter');
+		for (var j = 0; j < letter.length; j++) {
+			letter[j].style.top = letter[j].offsetTop + 2 + 'px'
+		}
+		gameover();
+	}
+	var time1 = setInterval(moveDown, speed1);
+	//键盘事件
+	function test(event) {
+		var letters = document.getElementsByClassName("letter");
+		for(var i = 65;i<=90;i++){
+			if (event.keyCode == i) {
+				for (j = 0;j<letters.length;j++) {
+					if (str[i-65] == letters[j].innerText) {
+						score_num++;//得分
+						letters[j].remove();
+						if (nowScore.innerText % 10 == 0 && nowScore.innerText != 0 && speed1 > 20) {
+							speed1-=2;
+							clearInterval(time1)
+							time1 = setInterval(moveDown, speed1);
+						}else if (nowScore.innerText % 50 == 0 && nowScore.innerText != 0 && speed1 <= 20 && speed > 10) {
+							speed1--;
+							clearInterval(time1)
+							time1 = setInterval(moveDown, speed1);
+						}
+						if (nowScore.innerText % 15 == 0 && nowScore.innerText != 0 && speed > 500) {
+							speed-=20;
+							clearInterval(time);
+							time = setInterval(appear, speed);
+						}else if (nowScore.innerText % 60 == 0 && nowScore.innerText != 0 && speed <= 500 && speed > 200) {
+							speed-=10;
+							clearInterval(time);
+							time = setInterval(appear, speed);
+						}
+						
+						if ((score_num - now_score) % 10 == 0 && hearts.length<5) {
+							var heart = document.createElement('div');
+							heart.className = "hearts";
+							main.appendChild(heart);
+							now_score = score_num;
+						}
+						break;
+					}
+				}
+			}
+		}
+		nowScore.innerText = score_num;
+	}
+var stare = 0;
+	function pause() {
+		if (stare == 0) {
+			$('pause').style.backgroundImage = 'url(images/star.png)';
+			clearInterval(time1);
+			clearInterval(time);
+			document.onkeydown="";
+			stare = 1;
+		}else if (stare == 1 && hearts.length>0) {
+			$('pause').style.backgroundImage = 'url(images/pause.png)';
+			time1 = setInterval(moveDown, speed1);
+			time = setInterval(appear, speed);
+			document.onkeydown=test;
+			stare = 0;
+			$('strat').style.display = "none";
+		}
+	}
+	function gameover() {
+		var letters = document.getElementsByClassName("letter");
+		for (var i = 0; i < letters.length; i++) {
+			var toop = letters[i].offsetTop+letters[i].offsetHeight;
+			if (toop>=main.clientHeight) {
+				letters[i].remove();
+				if (hearts.length>0) {
+					hearts[0].remove();
+					now_score = score_num;
+				}else{
+					pause();
+					$("music").remove();
+					score.innerText = nowScore.innerText;
+					$('gameover').style.display = 'block';
+				}
+			}
+		}
+	}
+	
+	document.onkeydown=test;
+	pause();
+</script>
+</html>

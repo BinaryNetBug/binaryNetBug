@@ -1,9 +1,8 @@
 package cn.binaryNetBug.controller;
 
+import cn.binaryNetBug.entity.Result;
 import cn.binaryNetBug.entity.User;
 import cn.binaryNetBug.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,7 @@ public class UserController
 {
   @Resource
   private UserService userService;
+  private Result result = new Result();
   
   public void setUserService(UserService userService)
   {
@@ -42,17 +42,7 @@ public class UserController
     if (user == null) {
       return null;
     }
-    ObjectMapper mapper = new ObjectMapper();
-    String userString = "";
-    try
-    {
-      userString = mapper.writeValueAsString(user);
-    }
-    catch (JsonProcessingException e)
-    {
-      e.printStackTrace();
-    }
-    request.getSession().setAttribute("user", userString);
+    request.getSession().setAttribute("user", user);
     return user;
   }
   
@@ -77,4 +67,53 @@ public class UserController
     }
     return Boolean.valueOf(true);
   }
+  
+  /**
+   * @author 冯天赐
+   * @param user
+   * @content 修改用户信息
+   */
+  @RequestMapping({"/updateUser.do"})
+  @ResponseBody
+  public boolean updateUser(User user){
+	  User ouser = userService.selectNickName(user.getNickName());
+	  if(ouser == null){
+		  try{
+			  userService.updateUser(user);
+		  }catch (Exception e){
+			  return Boolean.valueOf(false);
+		  }
+		  return true;
+	  }
+	  return false;
+  }
+  
+  /**
+   * @author 冯天赐
+   * @param user
+   * @param oldpassword
+   * @content 修改用户密码
+   */
+  @RequestMapping({"/resetPassword"})
+  @ResponseBody
+  public Result resetPassword(String nickName,String newPassword,String oldpassword,HttpServletRequest request){
+	  User user = new User();
+	  user.setNickName(nickName);
+	  user.setPassword(oldpassword);
+	  //验证原密码
+	  User oldUser = userService.login(user);
+	  if(oldUser != null){
+		  user.setUserId(oldUser.getUserId());
+		  user.setPassword(newPassword);
+		  userService.updateUser(user);
+		  request.getSession().removeAttribute("user");
+		  result.setResult(true);
+		  result.setMessage("密码修改完成，请重新登录！");
+	  }else{
+		  result.setResult(false);
+		  result.setError("密码错误！");
+	  }
+	  return result;
+  }
+  
 }

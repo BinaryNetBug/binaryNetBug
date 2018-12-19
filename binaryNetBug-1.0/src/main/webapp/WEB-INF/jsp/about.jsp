@@ -74,7 +74,7 @@
 					<a class="active" href="about.do">好玩儿</a>
 				</li>
 				<li>
-					<a href="myths.html">有用</a>
+					<a href="files.do">有用</a>
 				</li>
 				<li>
 					<a href="archives.html">推荐</a>

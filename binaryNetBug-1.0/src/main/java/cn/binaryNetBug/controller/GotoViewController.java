@@ -34,9 +34,9 @@ public class GotoViewController {
 	 * @content 跳转至有用页
 	 * @return
 	 */
-	@RequestMapping("/myths.do")
+	@RequestMapping("/files.do")
 	public String toMyths(){
-		return "myths";
+		return "files";
 	}
 	/**
 	 * @author 冯天赐
@@ -46,5 +46,14 @@ public class GotoViewController {
 	@RequestMapping("/archives.do")
 	public String toArchives(){
 		return "archives";
+	}
+	/**
+	 * @author 冯天赐
+	 * @centent 跳转至个人中心
+	 * @return
+	 */
+	@RequestMapping("/personCenter.do")
+	public String toPersonCenter(){
+		return "personCenter";
 	}
 }

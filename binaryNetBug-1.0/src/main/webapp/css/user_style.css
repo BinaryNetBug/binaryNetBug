@@ -1,0 +1,93 @@
+*{
+    padding:0;
+    margin: 0;
+}
+body{
+	color:white;
+    min-width: 1000px;
+    padding: 5px;
+    background-image:url("../images/bg-footer.jpg");
+    font-size: 20px;
+}
+.head{
+    padding: 5px;
+    font-size: 25px;
+}
+.head ul li{
+    list-style: none;
+    display: inline-block;
+    margin: 0 20px;
+    vertical-align: top;
+}
+.head ul li:nth-child(1),.head ul li:nth-child(3){
+    cursor: pointer;
+    padding: 0 3px;
+    border-radius: 5px;
+}
+.head ul li:nth-child(1):hover,.head ul li:nth-child(3):hover,.body_side ul li:hover{
+    font-style: italic;
+}
+.head ul li:nth-child(2) img{
+	display:inline-block;
+	overflow: hidden;
+	width:30px;
+	height:30px;
+    border-radius: 50%;
+    vertical-align: top;
+}
+.head ul{
+    display: inline-block;
+    float: right;
+}
+.head_title{
+    width: 100px;
+    text-align: center;
+    display:inline-block;
+}
+.body{
+    margin-top: 5px;
+}
+.body_side,.body_content{
+    display:inline-block;
+    height: 500px;
+    vertical-align: top;
+    padding: 5px;
+}
+.body_side ul li{
+    list-style: none;
+    padding:3px 0;
+    margin:10px 0;
+    width:100px;
+    text-align: center;
+    cursor: pointer;
+}
+.body_content{
+    width:1200px;
+}
+.body_content .user_file>div>h3{
+    padding:10px;
+}
+.body_content .user_file table tr>td:nth-child(1){
+    width: 60px;
+}
+.body_content .user_file table tr>td:nth-child(2){
+    width:800px;
+}
+.body_content .user_file table tr>td:nth-child(2)>p{
+    font-size: 14px;
+}
+.body_content .user_file table tr>td:nth-child(3){
+    text-align: right;
+}
+.body_content .user_file table tr>td{
+    display:inline-block;
+    margin: 10px 0;
+}
+.user_basic table td{
+	padding: 5px 10px;
+}
+.user_basic_button{
+	color: #2A00E1;
+	font-size: 16px;
+	cursor: pointer;
+}

@@ -13,7 +13,21 @@
   	delete from user where userId=#{userId};
   </delete>
   <update id="updateUser" parameterType="user">
-  	update user set nickName=#{nickName},password=#{password},headImg=#{headImg} where userId=#{userId}
+  	update user 
+  	<set>
+	  	<if test="nickName">
+	  		nickName=#{nickName},
+	  	</if>
+	  	<if test="password">
+	  		password=#{password},
+	  	</if>
+	  	<if test="headImg">
+	  		headImg=#{headImg},
+	  	</if>
+  	</set>
+  	<where>
+  		userId=#{userId}
+  	</where>
   </update>
   <select id="selectOne" resultType="user">
   	select * from user where userId=#{userId}

@@ -71,7 +71,7 @@ function submitDesign(scrollTop,id){
 	},function(data){//上传成功，回调函数
 		if(data!=null&&data!=''){
 			alert('注册成功！');
-			resetDesign();
+			resetDesign(id);
 		}else{
 			if(confirm('用户名已存在，是否登录？')){
 				$.post("select.do","nickName="+$('#'+nickName).val(),function(data){
@@ -88,10 +88,10 @@ function submitDesign(scrollTop,id){
 function openDesign(scrollTop,id){
 	var domText = '<a id="close" href="javascript:closeDesign(\''+id+'\')">x</a>'+
 	'<form action="javascript:submitDesign('+scrollTop+',\''+id+'\')">'+
-		'<p><img id="headImg" alt="图片未加载" src="images/default.png" style="width:100px;"><input type="file" style="display:none" id="file"><input type="hidden" value="images/default.png" name="headImg" id="headName"></p>'+
+		'<p><img id="headImg" onclick="$(\'#file\').click();" alt="图片未加载" src="images/default.png" style="width:100px;height:100px;"><input type="file" style="display:none" id="file" onChange="uploadFile(event)"><input type="hidden" value="images/default.png" name="headImg" id="headName"></p>'+
 		'用户名：<input type="text" id="nickName" maxlength="15"><br>'+
 		'密码：<input type="password" id="insertPassword" maxlength="20"><br><br>'+
-		'<input type="submit" value="注册" class="loginButton" style="color:#FFFF00;background-image:url(../images/designButton.png);">'+
+		'<input type="submit" value="注册" class="loginButton" style="color:#FFFF00;background-image:url(images/designButton.png);">'+
 		'<input type="reset" id="reset" style="display:none">'+
 	'</form>';
 	$('#'+id).html(domText);
@@ -130,7 +130,7 @@ function submitLogin(){
 			alert('用户处于'+data.usable+'状态！');
 			return;
 		}
-		showUser(data);
+		location.reload();
 		$("#"+userSession).val(data);
 	});
 }
@@ -143,16 +143,50 @@ function closeDesign(id){
 function showUser(data){
 	$('#'+sidebar_login).css('display','none');
 	$('#'+sidebar_user).css('display','inline-block');
-	$('#'+user_userName).text(data.nickName);
-	$('#'+user_balance).text(data.balance);
-	$('#'+user_integral).text(data.integral);
-	$('#'+user_head).attr('src',data.headImg);
 	$('#'+top_top_login).text('注销登录');
 }
 function isLogin(){
 	return $('#'+userSession).val() == '' || $("#"+userSession).val() == null ? false : true;
 }
-
+function uploadFile(e){
+	var formData = new FormData();
+	var imgExt = ["png","gif","jpg","jpeg"];
+	var file = $("#file")[0].files[0];
+	formData.append("file",file);//获取文件
+	formData.append("fileType","headImg");//指明文件类型为头像
+	if($.inArray($("#file").val().replace(/.+\./,""),imgExt)>=0){
+		if(file.size>10*1024*1024){
+			alert("请选择小于10M的图片")
+		}else{
+			//ajax请求
+			$.ajax({
+				url:"uploadFile.do",
+				type:"post",
+				data:formData,
+				contentType:false,
+				processData:false,
+				success:function(data) {
+					//将头像路径写入隐藏域
+					$("#headName").val(data);
+					//图片回显
+					for (var i = 0; i < e.target.files.length; i++) {  
+						var file = e.target.files.item(i);  
+						if (!(/^image\/.*$/i.test(file.type))) {  
+							continue; //不是图片 就跳出这一次循环  
+						}  
+						var freader = new FileReader();  
+						freader.readAsDataURL(file);  
+						freader.onload = function(e) {  
+							$("#headImg").attr("src",e.target.result);  
+						}  
+					}
+				}
+			});
+		}
+	}else{
+		alert("请选择文件格式为png,gif,jpg,jpeg的图片");
+	}
+}
 //登录模块初始化
 function initLogin(scrollTop,id){
 	createLoginDOM();
@@ -161,9 +195,6 @@ function initLogin(scrollTop,id){
 	});
 	$("#"+top_top_desion).click(function(){
 		openDesign(scrollTop,id);
-	});
-	$("#"+head).click(function(){
-		$("#file").click();
 	});
 	$("#"+top_top_login).click(function(){scrollLogin(scrollTop)});
 	//首页
@@ -174,50 +205,9 @@ function initLogin(scrollTop,id){
 	$("#"+top_top_download).click(function(){
 		location.href="downLoadServlet"
 	});
-	//上传图片并回显
-	$("#file").change(function(e){
-		var formData = new FormData();
-		var imgExt = ["png","gif","jpg","jpeg"];
-		var file = $("#file")[0].files[0];
-		formData.append("file",file);//获取文件
-		if($.inArray($("#file").val().replace(/.+\./,""),imgExt)>=0){
-			if(file.size>10*1024*1024){
-				alert("请选择小于10M的图片")
-			}else{
-				//ajax请求
-				$.ajax({
-					url:"uploadFile.do",
-					type:"post",
-					data:formData,
-					contentType:false,
-					processData:false,
-					success:function(data) {
-						head = "upload/"+data;
-						//将头像路径写入隐藏域
-						$("#headName").val(head);
-						//图片回显
-						for (var i = 0; i < e.target.files.length; i++) {  
-							var file = e.target.files.item(i);  
-							if (!(/^image\/.*$/i.test(file.type))) {  
-								continue; //不是图片 就跳出这一次循环  
-							}  
-							var freader = new FileReader();  
-							freader.readAsDataURL(file);  
-							freader.onload = function(e) {  
-								$("#headImg").attr("src",e.target.result);  
-							}  
-						}
-					}
-				});
-			}
-		}else{
-			alert("请选择文件格式为png,gif,jpg,jpeg的图片");
-		}
-	});
-	
 	//判断是否已登录
 	if(isLogin()){
 		var userStr = $("#"+userSession).val()
-		showUser($.parseJSON(userStr));
+		showUser(userStr);
 	}
 }

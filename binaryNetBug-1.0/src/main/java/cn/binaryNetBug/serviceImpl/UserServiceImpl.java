@@ -58,6 +58,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void updateUser(User user) {
+		if(user != null)
+			user.setPassword(Md5.encrypt(user.getPassword()));
 		this.userMapper.updateUser(user);
 	}
 

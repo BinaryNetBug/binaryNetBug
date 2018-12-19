@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>接糖糖</title>
+	<style type="text/css">
+		body{
+			text-align: center;
+		}
+		#catchs{
+			position: absolute;
+			top: 93%;
+			left: 210px;
+			width: 60px;
+			height: 20px;
+		}
+		#catchs img{
+			width: 115%;
+			position: absolute;
+			top:-80px;
+			left: -5px;
+		}
+		#main{
+			position: relative;
+			width: 500px;
+			height: 600px;
+			margin: 0 auto;
+			overflow: hidden;
+			background-image: url("sugar-images/bg.jpg");
+			background-size: 100%;
+		}
+		.tang,.boom{
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			top: -30px;
+			background-size: 100%;
+			background-repeat: no-repeat;
+		}
+		#title{
+			font-size: 40px;
+			color: red;
+		}
+		.hearts{
+			width: 30px;
+			height: 22px;
+			float: left;
+			position: relative;
+			top:-90px;
+			background-image: url('sugar-images/heart.png');
+			background-size: 100%;
+		}
+		#gameover{
+			position: relative;
+			width: 500px;
+			height: 200px;
+			margin-top: 150px;
+			font-size: 40px;
+			font-weight: bolder;
+			padding-top: 50px;
+			color: red;
+			text-shadow: 10px 20px 4px green;
+			z-index: 2;
+			display: none;
+		}
+		#gameover a{
+			text-decoration: none;
+			color: yellow;
+		}
+		#gameover a:hover{
+			color: blue;
+		}
+		#floor{
+			height: 11px;
+			width: 100%;
+			position: absolute;
+			bottom: 0;
+			background-image: url("sugar-images/floor.jpg");
+		}
+	</style>
+</head>
+<body onkeydown="move(event)">
+	<p id="title">接糖糖</p>
+	<div id="main">
+		<p style="font-size: 30px;">分数：<span id="score">0</span></p>
+		<div id="gameover">
+			Game Over
+			<br><a href="sugar.html">New</a>
+		</div>
+		<div id="catchs">
+			<img src="sugar-images/catch.png" alt="">
+		</div>
+		<div id="floor"></div>
+	</div>
+</body>
+<script type="text/javascript">
+	var speed = 40;//糖下落的速度
+	var speed1 = 1500;//糖下落的速度
+	var main = document.getElementById('main');//获取外部框
+	var score = document.getElementById('score');//获取分数部分
+
+	var score_num = 0;
+	//随机生成心方法
+	var t=0;
+	var life = 5;
+	for(var i = 0;i < 5;i++){
+		var hearts = document.createElement('div');
+		hearts.className = "hearts";
+		main.appendChild(hearts)
+	}
+	var hearts = document.getElementsByClassName('hearts');
+	//可以接的糖果
+	function appear() {
+		var left1 = parseInt(Math.random()*92+1);
+		var img = parseInt(Math.random()*8+1);
+		var div1=document.createElement("div");
+		div1.className="tang";
+		div1.style.left = left1+"%";
+		div1.style.backgroundImage = "url('sugar-images/"+img+".png')";
+		main.appendChild(div1);
+		// main.innerHTML+='<div class="tang" style="left:'+left1+'%"></div>';
+	}
+	//不可以接的刀子，炸弹
+	function boom() {
+		var left2 = parseInt(Math.random()*92+1);
+		var img2 = parseInt(Math.random()*4+1);
+		var div2=document.createElement("div");
+		div2.className="boom";
+		div2.style.left = left2+"%";
+		div2.style.backgroundImage = "url('sugar-images/boom"+img2+".png')";
+		main.appendChild(div2);
+	}
+	function goods() {
+		Math.random() > 0.3 ? appear() : boom();
+	}
+	
+	
+	var time1 = setInterval(goods,speed1);
+	//setTimeout(appear, 300);//计时器和innerHTML不可以共用
+	var catchs = document.getElementById('catchs');//获取篮子对象
+	//糖糖往下移
+	function moveDown() {
+		var tang = document.getElementsByClassName('tang');
+		var boom = document.getElementsByClassName('boom');
+		for (var j = 0; j < tang.length; j++) {
+			tang[j].style.top = tang[j].offsetTop + 2 + 'px'
+		}
+		for (var j = 0; j < boom.length; j++) {
+			boom[j].style.top = boom[j].offsetTop + 2 + 'px'
+		}
+		score1();
+	}
+	var time = setInterval(moveDown,speed);
+
+
+	
+
+	//键盘监听事件
+	var i = 210;
+	function move(event) {
+		switch(event.keyCode){
+			case 65://向左走按A
+			case 37://向左走按左方向键
+				i-=10;
+				if (i >= 10 && i <= 440) {
+					catchs.style.left = i + 'px';
+				}else{
+					i = 10;
+				}
+				break;
+			case 68://向右走按D
+			case 39://向右走按右方向键
+				i += 10;
+				if (i > 0 && i <= 430) {
+					catchs.style.left = i + 'px';
+				}else{
+					i = 430;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	//得分
+	var nowScore = 0;
+	function score1() {
+		var tang = document.getElementsByClassName('tang');
+		var boom = document.getElementsByClassName('boom');
+		var hearts = document.getElementsByClassName('hearts');
+		for (var i = 0; i < tang.length; i++) {
+			var toop = tang[i].offsetTop+tang[i].offsetHeight;
+			var leet = tang[i].offsetLeft+tang[i].clientWidth;
+			if (toop >= catchs.offsetTop && toop <= main.clientHeight) {
+				if (leet >= catchs.offsetLeft && tang[i].offsetLeft <= catchs.offsetLeft+catchs.clientWidth) {
+					score_num+=3;
+					tang[i].remove();
+					if (score_num % 12 == 0 && score_num != 0 && speed1>=500) {
+						speed1-=40;
+						clearInterval(time1);
+						time1 = setInterval(goods,speed1);
+					}
+					if (score_num % 9 == 0 && score_num != 0 && speed>=10) {
+						speed--;
+						clearInterval(time);
+						time = setInterval(moveDown,speed)
+					}
+					if ((score_num - nowScore) / 10 >= 1 && hearts.length<5) {
+						var hearts = document.createElement('div');
+						hearts.className = "hearts";
+						main.appendChild(hearts);
+						nowScore = score_num;
+					}
+				}
+			}
+			if (toop>=main.clientHeight) {
+				Game_over();
+				tang[i].remove();
+				
+			}
+			
+			
+		}
+		for (var i = 0; i < boom.length; i++) {
+			var toop1 = boom[i].offsetTop+boom[i].offsetHeight;
+			var leet1 = boom[i].offsetLeft+boom[i].clientWidth;
+			if (toop1 >= catchs.offsetTop && toop1 <= main.clientHeight) {
+				if (leet1 >= catchs.offsetLeft && boom[i].offsetLeft <= catchs.offsetLeft+catchs.clientWidth) {
+					Game_over();
+					boom[i].remove();
+				}
+			}
+			if (toop1>=main.clientHeight) {
+				boom[i].remove();
+			}
+		}
+		score.innerText = score_num;
+	}
+
+	//Game over 部分
+	// //五点生命值，漏掉一个减一点生命，从生命值不为五时开始，每获得二十分增加一点，生命值为零时，则视为游戏结束
+	
+	function Game_over() {
+		if (hearts.length>=0) {
+			hearts[0].remove();
+		}
+		if (hearts.length<=0) {
+			document.getElementById("gameover").style.display = 'block';
+			clearInterval(time);
+			clearInterval(time1);
+		}
+		nowScore = score_num;
+	}
+
+</script>
+</html>

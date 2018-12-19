@@ -13,6 +13,9 @@
 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="js/login.js"></script>
 	<script type="text/javascript">
+		function goPersonCenter(){
+			location.href="personCenter.do";
+		}
 		/*--------没有用户动作调用的方法---------*/
 		$(function(){
 			//初始化登录模块
@@ -34,7 +37,7 @@
 					<a href="about.do">好玩儿</a>
 				</li>
 				<li>
-					<a href="myths.html">有用</a>
+					<a href="files.do">有用</a>
 				</li>
 				<li>
 					<a href="archives.html">推荐</a>
@@ -86,14 +89,14 @@
 				</ul>
 				<ul class="connect" id="sidebar_user">
 					<li>
-						<img src="images/default.png" alt="" id="user_head"/>
+						<img src="${sessionScope.user.headImg }" alt="" id="user_head" onclick="goPersonCenter()"/>
 					</li>
 					<li>
-						<p id="user_userName"></p>
+						<p id="user_userName">${sessionScope.user.nickName }</p>
 					</li>
 					<li>
-						余额：<span id="user_balance">0</span>&nbsp;&nbsp;&nbsp;
-						积分：<span id="user_integral">0</span>
+						余额：<span id="user_balance">${sessionScope.user.balance }</span>&nbsp;&nbsp;&nbsp;
+						积分：<span id="user_integral">${sessionScope.user.integral }</span>
 					</li>
 				</ul>
 			</div>
